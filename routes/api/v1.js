@@ -59,7 +59,7 @@ var api = new base.API({
     "indexing tasks to make it easy to find artifacts, consider using the",
     "expiration date that the artifacts is assigned.",
     "",
-    "**Valid Characeters**, all keys in a namespace `<key1>.<key2>` must be",
+    "**Valid Characters**, all keys in a namespace `<key1>.<key2>` must be",
     "in the form `/[a-zA-Z0-9_!~*'()%-]+/`. Observe that this is URL-safe and",
     "that if you strictly want to put another character you can URL encode it.",
     "",
