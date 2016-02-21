@@ -1,0 +1,10 @@
+defaults:
+  taskcluster:
+    credentials:
+      clientId: "..."
+      accessToken: "..."
+  pulse:
+    username: "..."
+    password: "..."
+  influx:
+    connectionString: "..."
