@@ -17,7 +17,7 @@
     "promise": "6.0.1",
     "superagent": "^1.2.0",
     "superagent-promise": "^0.2.0",
-    "taskcluster-base": "^0.10.6",
+    "taskcluster-base": "^0.10.7",
     "taskcluster-client": "^0.22.6",
     "taskcluster-lib-loader": "^0.1.1"
   },
