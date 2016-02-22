@@ -20,8 +20,8 @@ var load = loader({
   IndexedTask: {
     requires: ['cfg'],
     setup: ({cfg}) => data.IndexedTask.setup({
-      account:          cfg.index.azureAccount,
-      table:            cfg.index.indexedTaskTableName,
+      account:          cfg.app.azureAccount,
+      table:            cfg.app.indexedTaskTableName,
       credentials:      cfg.taskcluster.credentials,
       authBaseUrl:      cfg.taskcluster.authBaseUrl
     })
@@ -29,8 +29,8 @@ var load = loader({
   Namespace: {
     requires: ['cfg'],
     setup: ({cfg}) => data.Namespace.setup({
-      account:          cfg.index.azureAccount,
-      table:            cfg.index.namespaceTableName,
+      account:          cfg.app.azureAccount,
+      table:            cfg.app.namespaceTableName,
       credentials:      cfg.taskcluster.credentials,
       authBaseUrl:      cfg.taskcluster.authBaseUrl
     })
@@ -42,7 +42,7 @@ var load = loader({
     setup: ({cfg}) => base.validator({
       folder:           path.join(__dirname, '..', 'schemas'),
       constants:        require('../schemas/constants'),
-      publish:          cfg.index.publishMetaData === 'true',
+      publish:          cfg.app.publishMetaData,
       schemaPrefix:     'index/v1/',
       aws:              cfg.aws
     })
@@ -76,7 +76,7 @@ var load = loader({
     requires: ['cfg', 'influx'],
     setup: ({cfg, influx}) => base.stats.startProcessUsageReporting({
       drain:      influx,
-      component:  cfg.index.statsComponent,
+      component:  cfg.app.statsComponent,
       process:    'server'
     })
   },
@@ -92,11 +92,11 @@ var load = loader({
       },
       validator:        validator,
       authBaseUrl:      cfg.taskcluster.authBaseUrl,
-      publish:          cfg.index.publishMetaData === 'true',
+      publish:          cfg.app.publishMetaData,
       baseUrl:          cfg.server.publicUrl + '/v1',
       referencePrefix:  'index/v1/api.json',
       aws:              cfg.aws,
-      component:        cfg.index.statsComponent,
+      component:        cfg.app.statsComponent,
       drain:            influx
     })
   },
@@ -105,12 +105,7 @@ var load = loader({
     requires: ['cfg', 'api'],
     setup: async ({cfg, api}) => {
       // Create app
-      let app = base.app({
-        port:           Number(process.env.PORT || cfg.server.port),
-        env:            cfg.server.env,
-        forceSSL:       cfg.server.forceSSL,
-        trustProxy:     cfg.server.trustProxy
-      });
+      let app = base.app(cfg.server);
 
       // Mount API router
       app.use('/v1', api);
@@ -129,10 +124,10 @@ var load = loader({
         queue:              queue,
         queueEvents:        queueEvents,
         credentials:        cfg.pulse,
-        queueName:          cfg.index.listenerQueueName,
-        routePrefix:        cfg.index.routePrefix,
+        queueName:          cfg.app.listenerQueueName,
+        routePrefix:        cfg.app.routePrefix,
         drain:              influx,
-        component:          cfg.index.statsComponent
+        component:          cfg.app.statsComponent
       });
 
       // Start listening for events and handle them

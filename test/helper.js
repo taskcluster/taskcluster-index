@@ -17,7 +17,7 @@ var cfg = base.config({profile});
 var helper = module.exports = {};
 
 // Skip tests if no AWS credentials is configured
-if (!cfg.index.azureAccount ||
+if (!cfg.app.azureAccount ||
     !cfg.taskcluster.credentials.accessToken ||
     !cfg.pulse.password) {
   console.log("Skip tests due to missing credentials!");
@@ -65,7 +65,7 @@ mocha.before(async () => {
     });
   };
   // Expose routePrefix to tests
-  helper.routePrefix = cfg.index.routePrefix;
+  helper.routePrefix = cfg.app.routePrefix;
   // Create client for working with API
   let baseUrl = 'http://localhost:' + server.address().port + '/v1';
   helper.baseUrl = baseUrl;

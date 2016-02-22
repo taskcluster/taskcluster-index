@@ -1,5 +1,5 @@
 defaults:
-  index:
+  app:
     # Route prefix used to form custom routes on the form
     #  'route.<routePrefix>.<namespace>'
     routePrefix:                  'index'
@@ -12,7 +12,7 @@ defaults:
     azureAccount:                 !env AZURE_ACCOUNT
 
     # Publish references and schemas
-    publishMetaData:              'false'
+    publishMetaData:              !env:bool PUBLISH_METADATA
 
     # Name of pulse queue, if a non-exclusive queue is to be used.
     listenerQueueName:            null
@@ -80,7 +80,7 @@ defaults:
     apiVersion:                     '2014-01-01'
 
 production:
-  index:
+  app:
     routePrefix:                  'index'
     indexedTaskTableName:         'IndexedTasks'
     namespaceTableName:           'Namespaces'
@@ -96,11 +96,10 @@ production:
     trustProxy:                     true
 
 test:
-  index:
+  app:
     routePrefix:                  'dummy-routes.index-testing'
     indexedTaskTableName:         'DummyTestIndexedTasks'
     namespaceTableName:           'DummyTestNamespaces'
-    publishMetaData:              'false'
     statsComponent:               'test-index'
     azureAccount:                 'jungle'
 
