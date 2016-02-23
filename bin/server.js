@@ -49,13 +49,14 @@ var load = loader({
   },
 
   // Create InfluxDB connection for submitting statistics
-  influx: {
+  drain: {
     requires: ['cfg'],
-    setup: ({cfg}) => new base.stats.Influx({
-      connectionString:   cfg.influx.connectionString,
-      maxDelay:           cfg.influx.maxDelay,
-      maxPendingPoints:   cfg.influx.maxPendingPoints
-    })
+    setup: ({cfg}) => {
+      if (cfg.influx && cfg.influx.connectionString) {
+        return new base.stats.Influx(cfg.influx)
+      }
+      return new base.stats.NullDrain();
+    }
   },
 
   // Configure queue and queueEvents
@@ -73,17 +74,17 @@ var load = loader({
 
   // Start monitoring the process
   monitor: {
-    requires: ['cfg', 'influx'],
-    setup: ({cfg, influx}) => base.stats.startProcessUsageReporting({
-      drain:      influx,
+    requires: ['cfg', 'drain'],
+    setup: ({cfg, drain}) => base.stats.startProcessUsageReporting({
+      drain:      drain,
       component:  cfg.app.statsComponent,
       process:    'server'
     })
   },
 
   api: {
-    requires: ['cfg', 'validator', 'IndexedTask', 'Namespace', 'influx', 'queue'],
-    setup: async ({cfg, validator, IndexedTask, Namespace, influx, queue}) => v1.setup({
+    requires: ['cfg', 'validator', 'IndexedTask', 'Namespace', 'drain', 'queue'],
+    setup: async ({cfg, validator, IndexedTask, Namespace, drain, queue}) => v1.setup({
       context: {
         queue:          queue,
         validator:      validator,
@@ -97,7 +98,7 @@ var load = loader({
       referencePrefix:  'index/v1/api.json',
       aws:              cfg.aws,
       component:        cfg.app.statsComponent,
-      drain:            influx
+      drain:            drain
     })
   },
 
@@ -116,8 +117,8 @@ var load = loader({
   },
 
   handlers: {
-    requires: ['IndexedTask', 'Namespace', 'queue', 'queueEvents', 'cfg', 'influx'],
-    setup: async ({IndexedTask, Namespace, queue, queueEvents, cfg, influx}) => {
+    requires: ['IndexedTask', 'Namespace', 'queue', 'queueEvents', 'cfg', 'drain'],
+    setup: async ({IndexedTask, Namespace, queue, queueEvents, cfg, drain}) => {
       var handlers = new Handlers({
         IndexedTask:        IndexedTask,
         Namespace:          Namespace,
@@ -126,7 +127,7 @@ var load = loader({
         credentials:        cfg.pulse,
         queueName:          cfg.app.listenerQueueName,
         routePrefix:        cfg.app.routePrefix,
-        drain:              influx,
+        drain:              drain,
         component:          cfg.app.statsComponent
       });
 
