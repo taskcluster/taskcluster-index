@@ -4,9 +4,9 @@ var path        = require('path');
 var _           = require('lodash');
 var base        = require('taskcluster-base');
 var mocha       = require('mocha');
-var api          = require('../src/api');
+var api          = require('../lib/api');
 var taskcluster = require('taskcluster-client');
-var load        = require('../src/main');
+var load        = require('../lib/main');
 var testing     = require('taskcluster-lib-testing');
 
 // Load configuration
