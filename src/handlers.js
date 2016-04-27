@@ -120,9 +120,14 @@ Handlers.prototype.completed = function(message) {
 
   // Get task definition
   return this.queue.task(message.payload.status.taskId).then(function(task) {
-    // Create default expiration date
-    var expires = new Date();
-    expires.setDate(expires.getDate() + 365);
+    
+    // Create expiration date
+    var expires = new Date();    
+    if(typeof(task.expires) !== 'undefined') {
+      expires.setDate(task.expires);
+    } else {
+      expires.setDate(expires.getDate() + 365);
+    };
 
     // Get `index` from `extra` section
     var options = _.defaults({}, (task.extra || {}).index || {}, {
