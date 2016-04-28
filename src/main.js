@@ -2,16 +2,14 @@
 var path        = require('path');
 var Promise     = require('promise');
 var debug       = require('debug')('index:bin:server');
-var raven       = require('raven');
 var base        = require('taskcluster-base');
 var taskcluster = require('taskcluster-client');
 var data        = require('./data');
 var Handlers    = require('./handlers');
 var v1          = require('./api');
-var loader      = require('taskcluster-lib-loader');
 
 // Create component loader
-var load = loader({
+var load = base.loader({
   cfg: {
     requires: ['profile'],
     setup: ({profile}) => base.config({profile}),
@@ -80,19 +78,9 @@ var load = loader({
     })
   },
 
-  raven: {
-    requires: ['cfg'],
-    setup: ({cfg}) => {
-      if (cfg.raven.sentryDSN) {
-        return new raven.Client(cfg.raven.sentryDSN);
-      }
-      return null;
-    }
-  },
-
   api: {
-    requires: ['cfg', 'validator', 'IndexedTask', 'Namespace', 'drain', 'queue', 'raven'],
-    setup: async ({cfg, validator, IndexedTask, Namespace, drain, queue, raven}) => v1.setup({
+    requires: ['cfg', 'validator', 'IndexedTask', 'Namespace', 'drain', 'queue'],
+    setup: async ({cfg, validator, IndexedTask, Namespace, drain, queue}) => v1.setup({
       context: {
         queue,
         validator,
@@ -106,8 +94,7 @@ var load = loader({
       aws:              cfg.aws,
       component:        cfg.app.statsComponent,
       validator,
-      drain,
-      raven
+      drain
     })
   },
 
