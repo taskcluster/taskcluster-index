@@ -61,7 +61,7 @@ var load = base.loader({
     setup: ({profile, cfg}) => base.monitor({
       project: 'taskcluster-index',
       credentials: cfg.taskcluster.credentials,
-      mock: process === 'test',
+      mock: profile === 'test',
     })
   },
 
