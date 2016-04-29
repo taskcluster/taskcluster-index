@@ -100,9 +100,9 @@
       "resolved": "https://registry.npmjs.org/async/-/async-1.5.2.tgz"
     },
     "aws-sdk": {
-      "version": "2.3.6",
+      "version": "2.3.7",
       "from": "aws-sdk@>=2.1.5 <3.0.0",
-      "resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.3.6.tgz"
+      "resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.3.7.tgz"
     },
     "aws-sdk-promise": {
       "version": "0.0.2",
@@ -688,6 +688,16 @@
           "version": "3.10.1",
           "from": "lodash@>=3.10.0 <4.0.0",
           "resolved": "https://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz"
+        },
+        "source-map": {
+          "version": "0.1.32",
+          "from": "source-map@0.1.32",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.1.32.tgz"
+        },
+        "source-map-support": {
+          "version": "0.2.10",
+          "from": "source-map-support@>=0.2.10 <0.3.0",
+          "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.2.10.tgz"
         }
       }
     },
@@ -1509,6 +1519,38 @@
         }
       }
     },
+    "mocha": {
+      "version": "2.4.5",
+      "from": "mocha@>=2.4.5 <3.0.0",
+      "resolved": "https://registry.npmjs.org/mocha/-/mocha-2.4.5.tgz",
+      "dependencies": {
+        "commander": {
+          "version": "2.3.0",
+          "from": "commander@2.3.0",
+          "resolved": "https://registry.npmjs.org/commander/-/commander-2.3.0.tgz"
+        },
+        "escape-string-regexp": {
+          "version": "1.0.2",
+          "from": "escape-string-regexp@1.0.2",
+          "resolved": "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.2.tgz"
+        },
+        "glob": {
+          "version": "3.2.3",
+          "from": "glob@3.2.3",
+          "resolved": "https://registry.npmjs.org/glob/-/glob-3.2.3.tgz"
+        },
+        "minimatch": {
+          "version": "0.2.14",
+          "from": "minimatch@>=0.2.11 <0.3.0",
+          "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-0.2.14.tgz"
+        },
+        "supports-color": {
+          "version": "1.2.0",
+          "from": "supports-color@1.2.0",
+          "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-1.2.0.tgz"
+        }
+      }
+    },
     "morgan": {
       "version": "1.7.0",
       "from": "morgan@>=1.5.2 <2.0.0",
@@ -1964,9 +2006,9 @@
       "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.5.tgz"
     },
     "source-map-support": {
-      "version": "0.2.10",
-      "from": "source-map-support@>=0.2.10 <0.3.0",
-      "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.2.10.tgz",
+      "version": "0.3.3",
+      "from": "source-map-support@>=0.3.3 <0.4.0",
+      "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.3.3.tgz",
       "dependencies": {
         "source-map": {
           "version": "0.1.32",
@@ -2058,9 +2100,8 @@
       "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-2.0.0.tgz"
     },
     "taskcluster-base": {
-      "version": "0.12.3",
-      "from": "taskcluster-base@>=0.12.3 <0.13.0",
-      "resolved": "https://registry.npmjs.org/taskcluster-base/-/taskcluster-base-0.12.3.tgz",
+      "version": "0.13.0",
+      "from": "taskcluster-base@>=0.13.0 <0.14.0",
       "dependencies": {
         "asap": {
           "version": "1.0.0",
@@ -2152,9 +2193,8 @@
       }
     },
     "taskcluster-lib-api": {
-      "version": "0.11.0",
-      "from": "taskcluster-lib-api@>=0.11.0 <0.12.0",
-      "resolved": "https://registry.npmjs.org/taskcluster-lib-api/-/taskcluster-lib-api-0.11.0.tgz",
+      "version": "0.12.0",
+      "from": "taskcluster-lib-api@>=0.12.0 <0.13.0",
       "dependencies": {
         "accepts": {
           "version": "1.1.4",
@@ -2403,16 +2443,6 @@
               "resolved": "https://registry.npmjs.org/send/-/send-0.9.3.tgz"
             }
           }
-        },
-        "source-map": {
-          "version": "0.1.32",
-          "from": "source-map@0.1.32",
-          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.1.32.tgz"
-        },
-        "source-map-support": {
-          "version": "0.3.3",
-          "from": "source-map-support@>=0.3.3 <0.4.0",
-          "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.3.3.tgz"
         },
         "superagent": {
           "version": "0.18.2",
@@ -2921,9 +2951,8 @@
       }
     },
     "taskcluster-lib-monitor": {
-      "version": "0.2.1",
-      "from": "taskcluster-lib-monitor@>=0.2.1 <0.3.0",
-      "resolved": "https://registry.npmjs.org/taskcluster-lib-monitor/-/taskcluster-lib-monitor-0.2.1.tgz"
+      "version": "0.4.0",
+      "from": "taskcluster-lib-monitor@>=0.4.0 <0.5.0"
     },
     "taskcluster-lib-scopes": {
       "version": "0.8.8",
