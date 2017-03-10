@@ -18,10 +18,16 @@ var cfg = Config({profile});
 var helper = module.exports = {};
 
 // Skip tests if no AWS credentials is configured
-if (!cfg.app.azureAccount ||
-    !cfg.taskcluster.credentials.accessToken ||
-    !cfg.pulse.password) {
-  console.log("Skip tests due to missing credentials!");
+if (!cfg.app.azureAccount) {
+  console.log("Skip tests due to missing azure account!");
+  process.exit(1);
+}
+if (!cfg.taskcluster.credentials.accessToken) {
+  console.log("Skip tests due to missing taskcluster credentials!");
+  process.exit(1);
+}
+if (!cfg.pulse.password) {
+  console.log("Skip tests due to missing pulse credentials!");
   process.exit(1);
 }
 
