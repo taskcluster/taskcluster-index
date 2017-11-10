@@ -34,8 +34,8 @@ var stubbedQueue = () => {
   var queue = new taskcluster.Queue({
     credentials:      {
       clientId: 'index-server',
-      accessToken: 'none'
-    }
+      accessToken: 'none',
+    },
   });
   var tasks = {};
 
@@ -75,7 +75,7 @@ mocha.before(async () => {
   helper.listenFor = function(binding) {
     // Create listener
     var listener = new taskcluster.PulseListener({
-      credentials:        cfg.pulse
+      credentials:        cfg.pulse,
     });
     // Track it, so we can close it in teardown()
     listeners.push(listener);
@@ -105,8 +105,8 @@ mocha.before(async () => {
     baseUrl:          baseUrl,
     credentials:      {
       clientId: 'test-client',
-      accessToken: 'none'
-    }
+      accessToken: 'none',
+    },
   });
 
   // Create queueEvents

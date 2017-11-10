@@ -5,9 +5,10 @@
   "main": "babel-node bin/server server",
   "scripts": {
     "compile": "babel-compile -p taskcluster src:lib test:.test",
+    "lint": "eslint src/*.js test/*.js",
     "test": "mocha .test/*_test.js",
-    "pretest": "npm run compile",
-    "install": "npm run compile"
+    "pretest": "yarn lint && yarn compile",
+    "install": "yarn compile"
   },
   "repository": {
     "type": "git",
@@ -40,5 +41,8 @@
   "engines": {
     "node": "^8.0.0",
     "yarn": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint-config-taskcluster": "^3.0.0"
   }
 }

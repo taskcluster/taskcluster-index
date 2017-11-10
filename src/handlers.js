@@ -22,14 +22,14 @@ var helpers     = require('./helpers');
  */
 var Handlers = function(options) {
   // Validate options
-  assert(options.IndexedTask, "A subclass of data.IndexedTask is required");
-  assert(options.Namespace,   "A subclass of data.Namespace is required");
-  assert(options.queue,       "An instance of taskcluster.Queue is required");
+  assert(options.IndexedTask, 'A subclass of data.IndexedTask is required');
+  assert(options.Namespace,   'A subclass of data.Namespace is required');
+  assert(options.queue,       'An instance of taskcluster.Queue is required');
   assert(options.queueEvents instanceof taskcluster.QueueEvents,
-         "An instance of taskcluster.QueueEvents is required");
-  assert(options.credentials, "credentials must be provided");
-  assert(options.routePrefix,       "routePrefix is required");
-  assert(options.monitor,           "monitor is required for statistics");
+    'An instance of taskcluster.QueueEvents is required');
+  assert(options.credentials, 'credentials must be provided');
+  assert(options.routePrefix,       'routePrefix is required');
+  assert(options.monitor,           'monitor is required for statistics');
   // Store options on this for use in event handlers
   this.IndexedTask      = options.IndexedTask;
   this.Namespace        = options.Namespace;
@@ -44,7 +44,7 @@ var Handlers = function(options) {
 
 /** Setup handlers and start listening */
 Handlers.prototype.setup = function() {
-  assert(this.listener === null, "Cannot setup twice!");
+  assert(this.listener === null, 'Cannot setup twice!');
   var that = this;
 
   // Create regular expression for parsing routes
@@ -53,7 +53,7 @@ Handlers.prototype.setup = function() {
   // Create listener
   this.listener = new taskcluster.PulseListener({
     credentials:          this.credentials,
-    queueName:            this.queueName
+    queueName:            this.queueName,
   });
 
   // Binding for completed tasks
@@ -67,9 +67,9 @@ Handlers.prototype.setup = function() {
     if (message.exchange === completedBinding.exchange) {
       return that.completed(message);
     }
-    debug("WARNING: received message from unexpected exchange: %s, message: %j",
-          message.exchange, message);
-    throw new Error("Got message from unexpected exchange: " +
+    debug('WARNING: received message from unexpected exchange: %s, message: %j',
+      message.exchange, message);
+    throw new Error('Got message from unexpected exchange: ' +
                     message.exchange);
   };
 
@@ -79,7 +79,7 @@ Handlers.prototype.setup = function() {
   // Start listening
   return this.listener.resume();
 
-  console.log("Handler listening for pulse messages");
+  console.log('Handler listening for pulse messages');
 };
 
 Handlers.prototype.terminate = async function() {
@@ -88,12 +88,10 @@ Handlers.prototype.terminate = async function() {
     await this.listener.close();
     this.listener = undefined;
   }
-}
-
+};
 
 // Export Handlers
 module.exports = Handlers;
-
 
 /** Handle notifications of completed messages */
 Handlers.prototype.completed = function(message) {
@@ -110,7 +108,7 @@ Handlers.prototype.completed = function(message) {
 
   // If there is no namespace we better log this
   if (namespaces.length === 0) {
-    debug("Didn't find any valid namespaces for message: %j", message);
+    debug('Didn\'t find any valid namespaces for message: %j', message);
     return;
   }
 
@@ -130,23 +128,23 @@ Handlers.prototype.completed = function(message) {
     var options = _.defaults({}, (task.extra || {}).index || {}, {
       rank:     0,
       expires:  expires.toJSON(),
-      data:     {}
+      data:     {},
     });
 	
     // Parse expiration date
     expires = new Date(options.expires);
 
     // Check that we have a number
-    if (typeof(options.rank) !== 'number') {
-      debug("Expected number from task.extra.index.rank, failing on %j",
-            message);
+    if (typeof options.rank !== 'number') {
+      debug('Expected number from task.extra.index.rank, failing on %j',
+        message);
       return;
     }
 
     // Check that data is an object
-    if (typeof(options.data) !== 'object') {
-      debug("Expected object from task.extra.index.data, failed on %j",
-            message);
+    if (typeof options.data !== 'object') {
+      debug('Expected object from task.extra.index.data, failed on %j',
+        message);
       return;
     }
 
@@ -156,10 +154,10 @@ Handlers.prototype.completed = function(message) {
         taskId:   message.payload.status.taskId,
         data:     options.data,
         expires:  expires,
-        rank:     options.rank
+        rank:     options.rank,
       }, that);
     })).then(function() {
-      debug("Indexed: %s", message.payload.status.taskId);
+      debug('Indexed: %s', message.payload.status.taskId);
     });
   });
 };
