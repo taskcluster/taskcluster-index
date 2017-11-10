@@ -6,7 +6,7 @@ suite('API', () => {
   var slugid      = require('slugid');
   var _           = require('lodash');
   var taskcluster = require('taskcluster-client');
-  var request     = require('superagent-promise')(require('superagent'), Promise);
+  var request     = require('superagent');
 
   // Artifact names that we have assigned scopes to testing credentials for.
   var publicArtifactName = 'public/dummy-test-provisioner.log';
@@ -96,7 +96,7 @@ suite('API', () => {
       'my.name.space',
       'public/abc.zip'
     );
-    var res = await request.get(url).redirects(0).end().catch(function(err) {
+    var res = await request.get(url).redirects(0).catch(function(err) {
       return err.response;
     });
     assert.equal(res.statusCode, 303, 'Expected 303 redirect');
@@ -119,7 +119,7 @@ suite('API', () => {
       'my.name.space',
       'not-public/abc.zip'
     );
-    var res = await request.get(url).redirects(0).end().catch(function(err) {
+    var res = await request.get(url).redirects(0).catch(function(err) {
       return err.response;
     });
     assert.equal(res.statusCode, 303, 'Expected 303 redirect');
@@ -150,7 +150,7 @@ suite('API', () => {
       'my.name.space',
       'not-public/abc.zip'
     );
-    var res = await request.get(url).redirects(0).end().catch(function(err) {
+    var res = await request.get(url).redirects(0).catch(function(err) {
       return err.response;
     });
     assert.equal(res.statusCode, 403, 'Expected 403 Forbidden');
