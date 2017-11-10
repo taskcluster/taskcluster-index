@@ -3,9 +3,9 @@ var Promise     = require('promise');
 var path        = require('path');
 var _           = require('lodash');
 var mocha       = require('mocha');
-var api          = require('../lib/api');
+var api          = require('../src/api');
 var taskcluster = require('taskcluster-client');
-var load        = require('../lib/main');
+var load        = require('../src/main');
 var Config      = require('typed-env-config');
 var testing     = require('taskcluster-lib-testing');
 
