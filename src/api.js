@@ -1,4 +1,3 @@
-var Promise     = require('promise');
 var _           = require('lodash');
 var debug       = require('debug')('routes:api:v1');
 var assert      = require('assert');

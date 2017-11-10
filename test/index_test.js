@@ -1,5 +1,4 @@
 suite('Indexing', () => {
-  var Promise     = require('promise');
   var assert      = require('assert');
   var debug       = require('debug')('index:test:index_test');
   var helper      = require('./helper');

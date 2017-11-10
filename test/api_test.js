@@ -1,5 +1,4 @@
 suite('API', () => {
-  var Promise     = require('promise');
   var assert      = require('assert');
   var debug       = require('debug')('index:test:api_test');
   var helper      = require('./helper');

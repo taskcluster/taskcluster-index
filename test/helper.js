@@ -1,5 +1,4 @@
 var assert      = require('assert');
-var Promise     = require('promise');
 var path        = require('path');
 var _           = require('lodash');
 var mocha       = require('mocha');

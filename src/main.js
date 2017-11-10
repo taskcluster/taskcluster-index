@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 var path        = require('path');
-var Promise     = require('promise');
 var debug       = require('debug')('index:bin:server');
 var taskcluster = require('taskcluster-client');
 var data        = require('./data');
