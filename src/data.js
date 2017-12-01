@@ -139,3 +139,40 @@ Namespace.ensureNamespace = function(namespace, expires) {
     });
   });
 };
+
+/**Delete expired entries */
+Namespace.expireEntries = function(parent, continuationToken) {
+  var that = this;
+
+  return that.query({
+    parent: parent,
+  },
+  {
+    limit:         500,
+    continuation:   continuationToken,
+  }).then(async (data) => {
+    var dataLength = data.length;
+    // Stop recursion if the namespace is an indexed task
+    if (dataLength == 0) {
+      return;
+    }
+    for (var i=0; i<dataLength; i++) {
+      let entry = data.entries[i];
+      let namespace = parent + '.' + entry.name;
+      await Namespace.expireEntries.call(that, namespace) ;
+
+      // insertTask is careful to update expires of entries 
+      // from the root out to the leaf. A parent's expires is
+      // always later than the child's. Hence, we can delete an
+      // entry without checking its children.
+      if (entry.expires.getTime() < Date.now()) {
+        entry.remove(false, true);
+      }
+    }            
+
+    if (data.continuation) {
+      await Namespace.expireEntries(parent, data.continuation) ;
+    }
+    return Promise.resolve(null);
+  });   
+};
