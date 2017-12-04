@@ -142,24 +142,20 @@ Namespace.ensureNamespace = function(namespace, expires) {
 
 /**Delete expired entries */
 Namespace.expireEntries = function(parent, continuationToken) {
-  var that = this;
 
-  return that.query({
+  return this.query({
     parent: parent,
   },
   {
     limit:         500,
     continuation:   continuationToken,
   }).then(async (data) => {
-    var dataLength = data.length;
-    // Stop recursion if the namespace is an indexed task
-    if (dataLength == 0) {
-      return;
-    }
+    var dataLength = data.entries.length;
+    
     for (var i=0; i<dataLength; i++) {
       let entry = data.entries[i];
       let namespace = parent + '.' + entry.name;
-      await Namespace.expireEntries.call(that, namespace) ;
+      await Namespace.expireEntries(namespace) ;
 
       // insertTask is careful to update expires of entries 
       // from the root out to the leaf. A parent's expires is
@@ -173,6 +169,5 @@ Namespace.expireEntries = function(parent, continuationToken) {
     if (data.continuation) {
       await Namespace.expireEntries(parent, data.continuation) ;
     }
-    return Promise.resolve(null);
   });   
 };
