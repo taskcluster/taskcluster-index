@@ -90,6 +90,8 @@ Namespace.ensureNamespace = function(namespace, expires) {
   // Find parent and folder name
   var name    = namespace.pop() || '';
   var parent  = namespace.join('.');
+  //console.log('here name ->', name);
+  //console.log('here  parent ->', parent);
 
   // Load namespace, to check if it exists and if we should update expires
   return that.load({
@@ -102,7 +104,7 @@ Namespace.ensureNamespace = function(namespace, expires) {
       if (this.expires < expires) {
         // Update expires
         this.expires = expires;
-
+        
         // Update all parents first though
         return Namespace.ensureNamespace.call(that, namespace, expires);
       }
@@ -141,33 +143,67 @@ Namespace.ensureNamespace = function(namespace, expires) {
 };
 
 /**Delete expired entries */
-Namespace.expireEntries = function(parent, continuationToken) {
-
+Namespace.expireEntries = function(parent, continuationToken=null) {
+  console.log('parent ->', parent);
+  
   return this.query({
     parent: parent,
   },
   {
     limit:         500,
     continuation:   continuationToken,
-  }).then(async (data) => {
+  }).then(async (data) => { 
+    console.log(data);
     var dataLength = data.entries.length;
     
     for (var i=0; i<dataLength; i++) {
       let entry = data.entries[i];
       let namespace = parent + '.' + entry.name;
-      await Namespace.expireEntries(namespace) ;
+      if (parent.length === 0 || entry.name.length === 0) {
+        namespace = parent + entry.name;
+      }
+      console.log ('namespace ->', namespace);
+      await Namespace.expireEntries(namespace);
 
       // insertTask is careful to update expires of entries 
       // from the root out to the leaf. A parent's expires is
       // always later than the child's. Hence, we can delete an
       // entry without checking its children.
+      console.log('expires ->', entry.expires.getTime());
+      console.log('current_time ->', Date.now());
       if (entry.expires.getTime() < Date.now()) {
         entry.remove(false, true);
       }
-    }            
+      await IndexedTask.ExpireTasks(namespace);
+    }
 
     if (data.continuation) {
-      await Namespace.expireEntries(parent, data.continuation) ;
+      await Namespace.expireEntries(parent, data.continuation);
     }
   });   
+};
+
+IndexedTask.ExpireTasks = function(namespace, continuationToken=null) {
+
+  console.log('index task namespace ->', namespace);
+  return this.query({
+    namespace: 'namespace',
+  },
+  {
+    limit:         500,
+    continuation:   continuationToken,
+  }).then(async (data) => {
+    var dataLength = data.entries.length;
+
+    for (var i=0; i<dataLength; i++) {
+      task = data.entries[i];
+      if (task.expires.getTime() < Date.now()) {
+        task.remove(false, true);
+      }
+    }
+
+    if (data.continuation) {
+      await IndexedTask.ExpireTasks(namespace, data.continuation) ;
+    }
+  });
 };
