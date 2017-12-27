@@ -171,10 +171,10 @@ Namespace.expireEntries = function(parent, continuationToken=null) {
       // entry without checking its children.
       console.log('expires ->', entry.expires.getTime());
       console.log('current_time ->', Date.now());
+      await IndexedTask.expireTasks(namespace);
       if (entry.expires.getTime() < Date.now()) {
         entry.remove(false, true);
       }
-      await IndexedTask.ExpireTasks(namespace);
     }
 
     if (data.continuation) {
@@ -183,7 +183,7 @@ Namespace.expireEntries = function(parent, continuationToken=null) {
   });   
 };
 
-IndexedTask.ExpireTasks = function(namespace, continuationToken=null) {
+IndexedTask.expireTasks = function(namespace, continuationToken=null) {
 
   console.log('index task namespace ->', namespace);
   return this.query({
@@ -203,7 +203,7 @@ IndexedTask.ExpireTasks = function(namespace, continuationToken=null) {
     }
 
     if (data.continuation) {
-      await IndexedTask.ExpireTasks(namespace, data.continuation) ;
+      await IndexedTask.expireTasks(namespace, data.continuation) ;
     }
   });
 };
