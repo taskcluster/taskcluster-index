@@ -177,7 +177,6 @@ suite('Indexing', () => {
       return;
     }    
     assert(false, 'This shouldn\'t have worked');
-    
 
   });
 
