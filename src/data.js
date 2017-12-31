@@ -143,7 +143,7 @@ Namespace.ensureNamespace = function(namespace, expires) {
 };
 
 /**Delete expired entries */
-Namespace.expireEntries = function(parent, continuationToken=null) {
+Namespace.expireEntries = function(parent, indexedTask, continuationToken=null) {
   console.log('parent ->', parent);
   
   return this.query({
@@ -163,22 +163,22 @@ Namespace.expireEntries = function(parent, continuationToken=null) {
         namespace = parent + entry.name;
       }
       console.log ('namespace ->', namespace);
-      await Namespace.expireEntries(namespace);
+      await this.expireEntries(namespace, indexedTask);
 
       // insertTask is careful to update expires of entries 
       // from the root out to the leaf. A parent's expires is
       // always later than the child's. Hence, we can delete an
       // entry without checking its children.
-      console.log('expires ->', entry.expires.getTime());
-      console.log('current_time ->', Date.now());
-      await IndexedTask.expireTasks(namespace);
+      //console.log('expires ->', entry.expires.getTime());
+      //console.log('current_time ->', Date.now());
+      await indexedTask.expireTasks(namespace);
       if (entry.expires.getTime() < Date.now()) {
         entry.remove(false, true);
       }
     }
 
     if (data.continuation) {
-      await Namespace.expireEntries(parent, data.continuation);
+      await Namespace.expireEntries(parent, indexedTask, data.continuation);
     }
   });   
 };
@@ -187,12 +187,13 @@ IndexedTask.expireTasks = function(namespace, continuationToken=null) {
 
   console.log('index task namespace ->', namespace);
   return this.query({
-    namespace: 'namespace',
+    namespace: namespace,
   },
   {
     limit:         500,
     continuation:   continuationToken,
   }).then(async (data) => {
+    console.log('indexed task data', data);
     var dataLength = data.entries.length;
 
     for (var i=0; i<dataLength; i++) {

@@ -140,7 +140,7 @@ suite('Indexing', () => {
     //console.log(expiry.getMinutes());
 
     var myns     = slugid.v4();
-    console.log('parent -> ', myns);
+    //console.log('parent -> ', myns);
     var taskId   = slugid.v4();
     var taskId2  = slugid.v4();
     await helper.index.insertTask(myns + '.my-task', {
@@ -166,10 +166,9 @@ suite('Indexing', () => {
     let result2 = await helper.index.findTask(myns + '.my-task2');
     console.log('task #2 ->', result2);
     assert(result2.taskId === taskId2, 'Wrong taskId');
-
-    await helper.handlers.Namespace.expireEntries('');
-    await helper.handlers.Namespace.expireEntries('');
-
+    //console.log(helper.handlers.IndexedTask);
+    await helper.handlers.Namespace.expireEntries('', helper.handlers.IndexedTask);
+    
     try {
       await helper.index.findTask(myns + '.my-task');
     } catch (err) {
