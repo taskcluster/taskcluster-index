@@ -166,7 +166,8 @@ Namespace.expireEntries = function(parent, indexedTask, continuationToken=null) 
       // entry without checking its children.
       await indexedTask.expireTasks(namespace);
       if (entry.expires.getTime() < Date.now()) {
-        entry.remove(false, true);
+        console.log(`remove namespace ${namespace}`);
+        //entry.remove(false, true);
       }
     }
 
@@ -190,7 +191,8 @@ IndexedTask.expireTasks = function(namespace, continuationToken=null) {
     for (var i=0; i<dataLength; i++) {
       task = data.entries[i];
       if (task.expires.getTime() < Date.now()) {
-        task.remove(false, true);
+        console.log(`remove task ${namespace}.${task.name}`);
+        //task.remove(false, true);
       }
     }
 
