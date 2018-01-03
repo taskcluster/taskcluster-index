@@ -90,8 +90,6 @@ Namespace.ensureNamespace = function(namespace, expires) {
   // Find parent and folder name
   var name    = namespace.pop() || '';
   var parent  = namespace.join('.');
-  //console.log('here name ->', name);
-  //console.log('here  parent ->', parent);
 
   // Load namespace, to check if it exists and if we should update expires
   return that.load({
@@ -144,8 +142,7 @@ Namespace.ensureNamespace = function(namespace, expires) {
 
 /**Delete expired entries */
 Namespace.expireEntries = function(parent, indexedTask, continuationToken=null) {
-  console.log('parent ->', parent);
-  
+ 
   return this.query({
     parent: parent,
   },
@@ -153,7 +150,6 @@ Namespace.expireEntries = function(parent, indexedTask, continuationToken=null) 
     limit:         500,
     continuation:   continuationToken,
   }).then(async (data) => { 
-    console.log(data);
     var dataLength = data.entries.length;
     
     for (var i=0; i<dataLength; i++) {
@@ -162,15 +158,12 @@ Namespace.expireEntries = function(parent, indexedTask, continuationToken=null) 
       if (parent.length === 0 || entry.name.length === 0) {
         namespace = parent + entry.name;
       }
-      console.log ('namespace ->', namespace);
       await this.expireEntries(namespace, indexedTask);
 
       // insertTask is careful to update expires of entries 
       // from the root out to the leaf. A parent's expires is
       // always later than the child's. Hence, we can delete an
       // entry without checking its children.
-      //console.log('expires ->', entry.expires.getTime());
-      //console.log('current_time ->', Date.now());
       await indexedTask.expireTasks(namespace);
       if (entry.expires.getTime() < Date.now()) {
         entry.remove(false, true);
@@ -185,7 +178,6 @@ Namespace.expireEntries = function(parent, indexedTask, continuationToken=null) 
 
 IndexedTask.expireTasks = function(namespace, continuationToken=null) {
 
-  console.log('index task namespace ->', namespace);
   return this.query({
     namespace: namespace,
   },
@@ -193,7 +185,6 @@ IndexedTask.expireTasks = function(namespace, continuationToken=null) {
     limit:         500,
     continuation:   continuationToken,
   }).then(async (data) => {
-    console.log('indexed task data', data);
     var dataLength = data.entries.length;
 
     for (var i=0; i<dataLength; i++) {

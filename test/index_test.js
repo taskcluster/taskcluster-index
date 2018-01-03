@@ -137,10 +137,8 @@ suite('Indexing', () => {
     // Create expiration
     var expiry = new Date();
     expiry.setMinutes(expiry.getMinutes() - 25);
-    //console.log(expiry.getMinutes());
-
+    
     var myns     = slugid.v4();
-    //console.log('parent -> ', myns);
     var taskId   = slugid.v4();
     var taskId2  = slugid.v4();
     await helper.index.insertTask(myns + '.my-task', {
@@ -149,24 +147,19 @@ suite('Indexing', () => {
       data:       {hello: 'world'},
       expires:    expiry.toJSON(),
     });
-
     let result = await helper.index.findTask(myns + '.my-task');
-    //console.log(result.namespace, result.name);
-    console.log('task #1', result);
     assert(result.taskId === taskId, 'Wrong taskId');
 
     expiry.setMinutes(expiry.getMinutes() + 50);
-
     await helper.index.insertTask(myns + '.my-task2', {
       taskId:     taskId2,
       rank:       42,
       data:       {hello: 'world two'},
       expires:    expiry.toJSON(),
     });
-    let result2 = await helper.index.findTask(myns + '.my-task2');
-    console.log('task #2 ->', result2);
-    assert(result2.taskId === taskId2, 'Wrong taskId');
-    //console.log(helper.handlers.IndexedTask);
+    result = await helper.index.findTask(myns + '.my-task2');
+    assert(result.taskId === taskId2, 'Wrong taskId');
+    
     await helper.handlers.Namespace.expireEntries('', helper.handlers.IndexedTask);
     
     try {
