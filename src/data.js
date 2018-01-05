@@ -149,6 +149,7 @@ Namespace.expireEntries = function(indexedTask, continuationToken=null) {
     limit:         500,
     continuation:   continuationToken,
   }).then(async (data) => {
+    console.log('..namespaces', data);
     var dataLength = data.entries.length;
     
     for (var i=0; i<dataLength; i++) {
@@ -184,6 +185,7 @@ IndexedTask.expireTasks = function(namespace, continuationToken=null) {
     limit:         500,
     continuation:   continuationToken,
   }).then(async (data) => {
+    console.log('..indexed tasks ', data);
     var dataLength = data.entries.length;
 
     for (var i=0; i<dataLength; i++) {
