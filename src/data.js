@@ -151,6 +151,14 @@ Namespace.expireEntries = function(indexedTask, continuationToken=null) {
   }).then(async (data) => {
     console.log('..namespaces', data);
     var dataLength = data.entries.length;
+    now = new Date();
+    now = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      0, 0, 0, 0
+    );
+    now = now.getTime();
     
     for (var i=0; i<dataLength; i++) {
       let entry = data.entries[i];
@@ -164,7 +172,7 @@ Namespace.expireEntries = function(indexedTask, continuationToken=null) {
       // always later than the child's. Hence, we can delete an
       // entry without checking its children.
       await indexedTask.expireTasks(namespace);
-      if (entry.expires.getTime() < Date.now()) {
+      if (entry.expires.getTime() < now) {
         console.log(`remove namespace ${namespace}`);
         entry.remove(false, true);
       }
