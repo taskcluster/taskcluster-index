@@ -160,7 +160,7 @@ suite('Indexing', () => {
     result = await helper.index.findTask(myns + '.my-task2');
     assert(result.taskId === taskId2, 'Wrong taskId');
     
-    await helper.handlers.Namespace.expireEntries('', helper.handlers.IndexedTask);
+    await helper.handlers.Namespace.expireEntries(helper.handlers.IndexedTask);
     
     try {
       await helper.index.findTask(myns + '.my-task');

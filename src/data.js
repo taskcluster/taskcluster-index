@@ -141,26 +141,23 @@ Namespace.ensureNamespace = function(namespace, expires) {
 };
 
 /**Delete expired entries */
-Namespace.expireEntries = function(parent, indexedTask, continuationToken=null) {
-  console.log(`expireEntries in '${parent}' with token '${continuationToken}'`);
-  return this.query({
-    parent: parent,
+Namespace.expireEntries = function(indexedTask, continuationToken=null) {
+  //console.log(`expireEntries in '${parent}' with token '${continuationToken}'`);
+  return this.scan({
   },
   {
     limit:         500,
     continuation:   continuationToken,
-  }).then(async (data) => { 
+  }).then(async (data) => {
     var dataLength = data.entries.length;
     
     for (var i=0; i<dataLength; i++) {
       let entry = data.entries[i];
       console.log(`..entry ${JSON.stringify(entry)}`);
-      let namespace = parent + '.' + entry.name;
-      if (parent.length === 0 || entry.name.length === 0) {
-        namespace = parent + entry.name;
+      let namespace = entry.parent + '.' + entry.name;
+      if (entry.parent.length === 0 || entry.name.length === 0) {
+        namespace = entry.parent + entry.name;
       }
-      await this.expireEntries(namespace, indexedTask);
-
       // insertTask is careful to update expires of entries 
       // from the root out to the leaf. A parent's expires is
       // always later than the child's. Hence, we can delete an
@@ -168,12 +165,12 @@ Namespace.expireEntries = function(parent, indexedTask, continuationToken=null) 
       await indexedTask.expireTasks(namespace);
       if (entry.expires.getTime() < Date.now()) {
         console.log(`remove namespace ${namespace}`);
-        //entry.remove(false, true);
+        entry.remove(false, true);
       }
     }
 
     if (data.continuation) {
-      await Namespace.expireEntries(parent, indexedTask, data.continuation);
+      await Namespace.expireEntries(indexedTask, data.continuation);
     }
   });   
 };
@@ -193,7 +190,7 @@ IndexedTask.expireTasks = function(namespace, continuationToken=null) {
       task = data.entries[i];
       if (task.expires.getTime() < Date.now()) {
         console.log(`remove task ${namespace}.${task.name}`);
-        //task.remove(false, true);
+        task.remove(false, true);
       }
     }
 
