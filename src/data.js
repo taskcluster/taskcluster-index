@@ -141,15 +141,8 @@ Namespace.ensureNamespace = function(namespace, expires) {
 };
 
 /**Delete expired entries */
-Namespace.expireEntries = function(indexedTask, continuationToken=null) {
+Namespace.expireEntries = function(now, indexedTask, continuationToken=null) {
   //console.log(`expireEntries in '${parent}' with token '${continuationToken}'`);
-  now = new Date();
-  now = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    0, 0, 0, 0
-  );
   return this.scan({
     expires: Entity.op.lessThan(now),
   },
@@ -176,7 +169,7 @@ Namespace.expireEntries = function(indexedTask, continuationToken=null) {
     }
 
     if (data.continuation) {
-      await Namespace.expireEntries(indexedTask, data.continuation);
+      await Namespace.expireEntries(now, indexedTask, data.continuation);
     } else {
       await indexedTask.expireTasks(now);
     }
