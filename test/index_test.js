@@ -136,7 +136,10 @@ suite('Indexing', () => {
   test('Expiring Index', async function() {
     // Create expiration
     var expiry = new Date();
-    expiry.setMinutes(expiry.getMinutes() - 25);
+
+    // Namespace.expireEntries removes tasks that are
+    // more than a day past expiry
+    expiry.setDate(expiry.getDate() - 1);
     
     var myns     = slugid.v4();
     var taskId   = slugid.v4();
@@ -150,7 +153,7 @@ suite('Indexing', () => {
     let result = await helper.index.findTask(myns + '.my-task');
     assert(result.taskId === taskId, 'Wrong taskId');
 
-    expiry.setMinutes(expiry.getMinutes() + 50);
+    expiry.setDate(expiry.getDate() + 1);
     await helper.index.insertTask(myns + '.my-task2', {
       taskId:     taskId2,
       rank:       42,
@@ -160,6 +163,7 @@ suite('Indexing', () => {
     result = await helper.index.findTask(myns + '.my-task2');
     assert(result.taskId === taskId2, 'Wrong taskId');
     
+    // Expires namespace and indexed tasks.
     await helper.handlers.Namespace.expireEntries(helper.handlers.IndexedTask);
     
     try {

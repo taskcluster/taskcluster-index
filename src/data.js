@@ -143,7 +143,15 @@ Namespace.ensureNamespace = function(namespace, expires) {
 /**Delete expired entries */
 Namespace.expireEntries = function(indexedTask, continuationToken=null) {
   //console.log(`expireEntries in '${parent}' with token '${continuationToken}'`);
+  now = new Date();
+  now = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    0, 0, 0, 0
+  );
   return this.scan({
+    expires: Entity.op.lessThan(now),
   },
   {
     limit:         500,
@@ -151,14 +159,6 @@ Namespace.expireEntries = function(indexedTask, continuationToken=null) {
   }).then(async (data) => {
     console.log('..namespaces', data);
     var dataLength = data.entries.length;
-    now = new Date();
-    now = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      0, 0, 0, 0
-    );
-    now = now.getTime();
     
     for (var i=0; i<dataLength; i++) {
       let entry = data.entries[i];
@@ -171,23 +171,22 @@ Namespace.expireEntries = function(indexedTask, continuationToken=null) {
       // from the root out to the leaf. A parent's expires is
       // always later than the child's. Hence, we can delete an
       // entry without checking its children.
-      await indexedTask.expireTasks(namespace);
-      if (entry.expires.getTime() < now) {
-        console.log(`remove namespace ${namespace}`);
-        entry.remove(false, true);
-      }
+      console.log(`remove namespace ${namespace}`);
+      entry.remove(false, true);
     }
 
     if (data.continuation) {
       await Namespace.expireEntries(indexedTask, data.continuation);
+    } else {
+      await indexedTask.expireTasks(now);
     }
   });   
 };
 
-IndexedTask.expireTasks = function(namespace, continuationToken=null) {
+IndexedTask.expireTasks = function(now, continuationToken=null) {
 
-  return this.query({
-    namespace: namespace,
+  return this.scan({
+    expires: Entity.op.lessThan(now),
   },
   {
     limit:         500,
@@ -198,14 +197,11 @@ IndexedTask.expireTasks = function(namespace, continuationToken=null) {
 
     for (var i=0; i<dataLength; i++) {
       task = data.entries[i];
-      if (task.expires.getTime() < Date.now()) {
-        console.log(`remove task ${namespace}.${task.name}`);
-        task.remove(false, true);
-      }
+      console.log(`remove task ${task.name}`);
+      task.remove(false, true);
     }
-
     if (data.continuation) {
-      await IndexedTask.expireTasks(namespace, data.continuation) ;
+      await IndexedTask.expireTasks(now, data.continuation) ;
     }
   });
 };
