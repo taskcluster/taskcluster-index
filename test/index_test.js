@@ -133,7 +133,7 @@ suite('Indexing', () => {
     assert.equal(result.taskId, taskId, 'Wrong taskId');
   });
 
-  test('Expiring Index', async function() {
+  test('Expiring Indexed Tasks', async function() {
     // Create expiration
     var expiry = new Date();
 
@@ -167,7 +167,7 @@ suite('Indexing', () => {
     var now = taskcluster.fromNow('- 1 day');
     debug('Expiring entries at: %s, from before %s', new Date(), now);
     // Expires namespace and indexed tasks.
-    await helper.handlers.Namespace.expireEntries(now, helper.handlers.IndexedTask);
+    await helper.handlers.IndexedTask.expireTasks(now);
     
     try {
       await helper.index.findTask(myns + '.my-task');
