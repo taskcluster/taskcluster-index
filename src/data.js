@@ -141,7 +141,7 @@ Namespace.ensureNamespace = function(namespace, expires) {
 };
 
 /**Delete expired entries */
-Namespace.expireEntries = function(now, indexedTask, continuationToken=null) {
+Namespace.expireEntries = function(now, indexedTask, continuationToken=undefined) {
   //console.log(`expireEntries in '${parent}' with token '${continuationToken}'`);
   return this.scan({
     expires: Entity.op.lessThan(now),
