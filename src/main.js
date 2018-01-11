@@ -137,11 +137,12 @@ var load = loader({
   expire: {
     requires: ['cfg', 'IndexedTask', 'Namespace'],
     setup: async ({cfg, IndexedTask, Namespace}) => {
+      let now = taskcluster.fromNow(cfg.app.expirationDelay);
 
       debug('Expiring index entries and namespaces');
-      await Namespace.expireEntries('', IndexedTask);
+      await Namespace.expireEntries(now, IndexedTask);
 
-      monitor.count('expire-artifacts.done');
+      monitor.count('expire.done');
       monitor.stopResourceMonitoring();
       await monitor.flush();
     },

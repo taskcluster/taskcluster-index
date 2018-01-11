@@ -176,7 +176,7 @@ Namespace.expireEntries = function(now, indexedTask, continuationToken=null) {
   });   
 };
 
-IndexedTask.expireTasks = function(now, continuationToken=null) {
+IndexedTask.expireTasks = function(now, continuationToken=undefined) {
 
   return this.scan({
     expires: Entity.op.lessThan(now),
