@@ -141,16 +141,16 @@ Namespace.ensureNamespace = function(namespace, expires) {
 };
 
 /**Delete expired entries */
-Namespace.expireEntries = function(now, indexedTask, continuationToken=undefined) {
-  //console.log(`expireEntries in '${parent}' with token '${continuationToken}'`);
-  return this.scan({
-    expires: Entity.op.lessThan(now),
-  },
-  {
-    limit:         500,
-    continuation:   continuationToken,
-  }).then(async (data) => {
-    console.log('..namespaces', data);
+Namespace.expireEntries = async function(now, indexedTask) {
+  let continuationToken = undefined;
+  while (1) {
+    let data = await this.scan({
+      expires: Entity.op.lessThan(now),
+    },
+    {
+      limit:         500,
+      continuation:   continuationToken,
+    });
     var dataLength = data.entries.length;
     
     for (var i=0; i<dataLength; i++) {
@@ -168,23 +168,24 @@ Namespace.expireEntries = function(now, indexedTask, continuationToken=undefined
       entry.remove(false, true);
     }
 
-    if (data.continuation) {
-      await Namespace.expireEntries(now, indexedTask, data.continuation);
-    } else {
-      await indexedTask.expireTasks(now);
+    if (!data.continuation) {
+      break;
     }
-  });   
+  }
+  await indexedTask.expireTasks(now);
 };
 
-IndexedTask.expireTasks = function(now, continuationToken=undefined) {
+IndexedTask.expireTasks = async function(now) {
+  let continuationToken = undefined;
+  while (1) {
+    let data = await this.scan({
+      expires: Entity.op.lessThan(now),
+    },
+    {
+      limit:         500,
+      continuation:   continuationToken,
+    });
 
-  return this.scan({
-    expires: Entity.op.lessThan(now),
-  },
-  {
-    limit:         500,
-    continuation:   continuationToken,
-  }).then(async (data) => {
     console.log('..indexed tasks ', data);
     var dataLength = data.entries.length;
 
@@ -193,8 +194,8 @@ IndexedTask.expireTasks = function(now, continuationToken=undefined) {
       console.log(`remove task ${task.name}`);
       task.remove(false, true);
     }
-    if (data.continuation) {
-      await IndexedTask.expireTasks(now, data.continuation) ;
+    if (!data.continuation) {
+      break;
     }
-  });
+  }
 };
