@@ -172,7 +172,6 @@ Namespace.expireEntries = async function(now, indexedTask) {
       break;
     }
   }
-  await indexedTask.expireTasks(now);
 };
 
 IndexedTask.expireTasks = async function(now) {
