@@ -141,7 +141,7 @@ Namespace.ensureNamespace = function(namespace, expires) {
 };
 
 /**Delete expired entries */
-Namespace.expireEntries = async function(now, indexedTask) {
+Namespace.expireEntries = async function(now) {
   let continuationToken = undefined;
   while (1) {
     let data = await this.scan({
