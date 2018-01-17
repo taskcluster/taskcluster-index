@@ -190,7 +190,7 @@ suite('Indexing', () => {
     });
     let result = await helper.index.findTask(myns + '.one-ns.my-task');
     assert(result.taskId === taskId, 'Wrong taskId');
-    expiry.setDate(expiry.getDate() - 1);
+    expiry.setDate(expiry.getDate() - 2);
     await helper.index.insertTask(myns + '.another-ns.my-task', {
       taskId:     taskId2,
       rank:       42,

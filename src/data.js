@@ -78,7 +78,7 @@ Namespace.ensureNamespace = function(namespace, expires) {
   expires = new Date(
     expires.getFullYear(),
     expires.getMonth(),
-    expires.getDate(),
+    expires.getDate() + 1,
     0, 0, 0, 0
   );
 
