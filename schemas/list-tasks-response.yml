@@ -41,6 +41,7 @@ properties:
             Data that was reported with the task. This is an arbitrary JSON
             object.
           type:           object
+          additionalProperties: true
         expires:
           title:          "Expiration"
           description: |
