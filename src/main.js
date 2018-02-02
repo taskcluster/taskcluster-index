@@ -27,7 +27,7 @@ var load = loader({
       table:            cfg.app.indexedTaskTableName,
       credentials:      cfg.taskcluster.credentials,
       authBaseUrl:      cfg.taskcluster.authBaseUrl,
-      monitor:          monitor.prefix('data.indexedtasks'),
+      monitor:          monitor.prefix('table.indexedtasks'),
     }),
   },
   Namespace: {
@@ -37,7 +37,7 @@ var load = loader({
       table:            cfg.app.namespaceTableName,
       credentials:      cfg.taskcluster.credentials,
       authBaseUrl:      cfg.taskcluster.authBaseUrl,
-      monitor:          monitor.prefix('data.namespaces'),
+      monitor:          monitor.prefix('table.namespaces'),
     }),
   },
 
