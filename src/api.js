@@ -159,7 +159,37 @@ api.declare({
   });
 });
 
-/** List namespaces inside another namespace */
+/** GET List namespaces inside another namespace */
+api.declare({
+  method:         'get',
+  route:          '/namespaces/:namespace?',
+  name:           'listNamespacesGet',
+  stability:      'deprecated',
+  output:         'list-namespaces-response.json#',
+  title:          'List Namespaces',
+  description: [
+    'List the namespaces immediately under a given namespace.',
+    '',
+    'This endpoint',
+    'lists up to 1000 namespaces. If more namespaces are present, a',
+    '`continuationToken` will be returned, which can be given in the next',
+    'request. For the initial request, the payload should be an empty JSON',
+    'object.',
+  ].join('\n'),
+}, function(req, res) {
+  var that       = this;
+  var namespace = req.params.namespace || '';
+  let continuation  = req.query.continuationToken || null;
+  let limit         = parseInt(req.query.limit || 1000, 10);
+  let query = {
+    parent: namespace,
+  };
+
+  // Query with given namespace
+  helpers.getModelData({query, limit, continuation, Model: that.Namespace}, (error, retval) => res.reply(retval));
+});
+
+/** POST List namespaces inside another namespace */
 api.declare({
   method:         'post',
   route:          '/namespaces/:namespace?',
@@ -179,24 +209,15 @@ api.declare({
   ].join('\n'),
 }, function(req, res) {
   var that       = this;
-  var namespace = req.params.namespace || '';
+  let namespace = req.params.namespace || '';
+  let limit = req.body.limit;
+  let continuation = req.body.continuationToken;
+  let query = {
+    parent: namespace,
+  };
 
   // Query with given namespace
-  return that.Namespace.query({
-    parent:      namespace,
-  }, {
-    limit:          req.body.limit,
-    continuation:   req.body.continuationToken,
-  }).then(function(data) {
-    var retval = {};
-    retval.namespaces = data.entries.map(function(ns) {
-      return ns.json();
-    });
-    if (data.continuation) {
-      retval.continuationToken = data.continuation;
-    }
-    return res.reply(retval);
-  });
+  helpers.getModelData({query, limit, continuation, Model: that.Namespace}, (error, retval) => res.reply(retval));
 });
 
 /** List tasks in namespace */
@@ -223,22 +244,11 @@ api.declare({
 }, function(req, res) {
   var that       = this;
   var namespace = req.params.namespace || '';
+  let query = {
+    namespace,
+  };
 
-  return that.IndexedTask.query({
-    namespace:    namespace,
-  }, {
-    limit:        req.body.limit,
-    continuation: req.body.continuationToken,
-  }).then(function(data) {
-    var retval = {};
-    retval.tasks = data.entries.map(function(task) {
-      return task.json();
-    });
-    if (data.continuation) {
-      retval.continuationToken = data.continuation;
-    }
-    return res.reply(retval);
-  });
+  helpers.getModelData({query, limit, continuation, Model: that.IndexedTask}, (error, retval) => res.reply(retval));
 });
 
 /** Insert new task into the index */
