@@ -163,8 +163,12 @@ api.declare({
 api.declare({
   method:         'get',
   route:          '/namespaces/:namespace?',
-  name:           'listNamespacesGet',
-  stability:      'deprecated',
+  query: {
+    continuationToken: /./,
+    limit: /^[0-9]+$/,
+  },
+  name:           'listNamespaces',
+  stability:      API.stability.stable,
   output:         'list-namespaces-response.json#',
   title:          'List Namespaces',
   description: [
@@ -186,15 +190,21 @@ api.declare({
   };
 
   // Query with given namespace
-  helpers.getModelData({query, limit, continuation, Model: that.Namespace}, (error, retval) => res.reply(retval));
+  helpers.getModelData({
+    query,
+    limit,
+    continuation,
+    key : 'namespaces',
+    Model: that.Namespace,
+  }, (error, retval) => res.reply(retval));
 });
 
 /** POST List namespaces inside another namespace */
 api.declare({
   method:         'post',
   route:          '/namespaces/:namespace?',
-  name:           'listNamespaces',
-  stability:      API.stability.stable,
+  name:           'listNamespacesPost',
+  stability:      'deprecated',
   input:          'list-namespaces-request.json#',
   output:         'list-namespaces-response.json#',
   title:          'List Namespaces',
@@ -217,7 +227,13 @@ api.declare({
   };
 
   // Query with given namespace
-  helpers.getModelData({query, limit, continuation, Model: that.Namespace}, (error, retval) => res.reply(retval));
+  helpers.getModelData({
+    query,
+    limit,
+    continuation,
+    key : 'namespaces',
+    Model: that.Namespace,
+  }, (error, retval) => res.reply(retval));
 });
 
 /** List tasks in namespace */
@@ -243,12 +259,21 @@ api.declare({
   ].join('\n'),
 }, function(req, res) {
   var that       = this;
-  var namespace = req.params.namespace || '';
+  let namespace = req.params.namespace || '';
   let query = {
     namespace,
   };
 
-  helpers.getModelData({query, limit, continuation, Model: that.IndexedTask}, (error, retval) => res.reply(retval));
+  let limit = req.body.limit;
+  let continuation = req.body.continuationToken;
+
+  helpers.getModelData({
+    query,
+    limit,
+    continuation,
+    key: 'tasks',
+    Model: that.IndexedTask,
+  }, (error, retval) => res.reply(retval));
 });
 
 /** Insert new task into the index */

@@ -80,14 +80,14 @@ var insertTask = function(namespace, input, options) {
   });
 };
 
-var getModelData = function({query, limit, continuation, Model}, callback) {
+var getModelData = function({query, limit, continuation, key, Model}, callback) {
   return Model.query(query, {
     limit,
     continuation,
   }).then(function(data) {
     var retval = {};
-    retval.tasks = data.entries.map(function(task) {
-      return task.json();
+    retval[key] = data.entries.map(function(entry) {
+      return entry.json();
     });
     if (data.continuation) {
       retval.continuationToken = data.continuation;
