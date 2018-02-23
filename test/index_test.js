@@ -38,6 +38,37 @@ suite('Indexing', () => {
     };
   };
 
+  var makeTaskNameSpaceList = function() {
+    return {
+      provisionerId: 'dummy-test-provisioner2',
+      workerType: 'dummy-test-worker-type',
+      scopes: [],
+      routes: [
+        helper.routePrefix + '.',
+        helper.routePrefix + '.my-new-ns',
+        helper.routePrefix + '.my-new-ns.one-ns',
+        helper.routePrefix + '.my-new-ns.one-ns.test',
+        helper.routePrefix + '.my-new-ns.one-ns.test.test1',
+        helper.routePrefix + '.my-new-ns.two-ns.test2',
+        helper.routePrefix + '.my-new-ns.two-ns.test3',
+        helper.routePrefix + '.my-new-ns.three-ns.test4',
+      ],
+      retries: 3,
+      created: (new Date()).toJSON(),
+      deadline: (new Date()).toJSON(),
+      payload: {},
+      metadata: {
+        name: 'Print `"Hello World"` Once',
+        description: 'This task will prìnt `"Hello World"` **once**!',
+        owner: 'jojensen@mozilla.com',
+        source: 'https://github.com/taskcluster/taskcluster-index',
+      },
+      tags: {
+        objective: 'Test task indexing',
+      },
+    };
+  };
+
   test('Run task and test indexing', async function() {
     var taskId = slugid.nice();
     var task = makeTask();
@@ -211,6 +242,38 @@ suite('Indexing', () => {
       return ns.name === 'one-ns';
     }), 'Expected to find one-ns');
     
+  });
+
+  var insert10Tasks = async function(myns) {
+    var expiry = new Date();
+    expiry.setDate(expiry.getDate() + 10);
+    var res = [];
+    for (var i = 1; i <= 10; i++) {
+      let taskId = slugid.nice();
+      await helper.index.insertTask(myns + '.my-task' + _.toString(i) + '.new' + _.toString(i), {
+        taskId:     taskId,
+        rank:       i,
+        data:       {hello: 'world ' + _.toString(i)},
+        expires:    expiry.toJSON(),
+      });
+      let result = await helper.index.findTask(myns + '.my-task' + _.toString(i) + '.new' + _.toString(i));
+      res.push(result);
+      assert(result.taskId === taskId, 'Wrong taskId');
+    }
+    return res;
+  };
+
+  test('list top-level namespaces (without auth) results', async function() {
+    var myns = slugid.v4();
+    let tasks = await insert10Tasks(myns);
+    let result = await helper.index.listNamespaces(myns, {limit: 1});
+    assert.equal(result.namespaces.length, 1, 'Expected 1 namespace');
+    result.namespaces.forEach(function(obj) {
+      assert.equal(
+        new RegExp(myns + '.my-task').test(obj.namespace) &&
+        new RegExp('my-task').test(obj.name),
+        true, 'Expect namespace to match regex');
+    });
   });
 
 });

@@ -80,8 +80,22 @@ var insertTask = function(namespace, input, options) {
   });
 };
 
-var getModelData = function({query, limit, continuation, key, Model}, callback) {
-  return Model.query(query, {
+// Export insertTask
+exports.insertTask = insertTask;
+
+/**
+* Executes a given query on a Table
+* input :
+* {
+*    query:            // Object of the query to executed
+*    limit:            // limit for the number of results
+*    continuation:     // the continuationToken
+*    key :             // key in the results to be used to create output
+*    Table:            // Table on which query is to be executed  
+* }
+*/
+var listTableEntries = function({query, limit, continuation, key, Table}, callback) {
+  return Table.query(query, {
     limit,
     continuation,
   }).then(function(data) {
@@ -96,11 +110,8 @@ var getModelData = function({query, limit, continuation, key, Model}, callback) 
   });
 };
 
-// Export insertTask
-exports.insertTask = insertTask;
-
-// Export getModelData
-exports.getModelData = getModelData;
+// Export listTableEntries
+exports.listTableEntries = listTableEntries;
 
 /** Regular expression for valid namespaces */
 exports.namespaceFormat = /^([a-zA-Z0-9_!~*'()%-]+\.)*[a-zA-Z0-9_!~*'()%-]+$/;

@@ -185,17 +185,15 @@ api.declare({
   var namespace = req.params.namespace || '';
   let continuation  = req.query.continuationToken || null;
   let limit         = parseInt(req.query.limit || 1000, 10);
-  let query = {
-    parent: namespace,
-  };
+  let query = {parent: namespace};
 
   // Query with given namespace
-  helpers.getModelData({
+  return helpers.listTableEntries({
     query,
     limit,
     continuation,
     key : 'namespaces',
-    Model: that.Namespace,
+    Table: that.Namespace,
   }, (error, retval) => res.reply(retval));
 });
 
@@ -222,17 +220,15 @@ api.declare({
   let namespace = req.params.namespace || '';
   let limit = req.body.limit;
   let continuation = req.body.continuationToken;
-  let query = {
-    parent: namespace,
-  };
+  let query = {parent: namespace};
 
   // Query with given namespace
-  helpers.getModelData({
+  return helpers.listTableEntries({
     query,
     limit,
     continuation,
     key : 'namespaces',
-    Model: that.Namespace,
+    Table: that.Namespace,
   }, (error, retval) => res.reply(retval));
 });
 
@@ -267,12 +263,12 @@ api.declare({
   let limit = req.body.limit;
   let continuation = req.body.continuationToken;
 
-  helpers.getModelData({
+  return helpers.listTableEntries({
     query,
     limit,
     continuation,
     key: 'tasks',
-    Model: that.IndexedTask,
+    Table: that.IndexedTask,
   }, (error, retval) => res.reply(retval));
 });
 
