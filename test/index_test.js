@@ -38,37 +38,6 @@ suite('Indexing', () => {
     };
   };
 
-  var makeTaskNameSpaceList = function() {
-    return {
-      provisionerId: 'dummy-test-provisioner2',
-      workerType: 'dummy-test-worker-type',
-      scopes: [],
-      routes: [
-        helper.routePrefix + '.',
-        helper.routePrefix + '.my-new-ns',
-        helper.routePrefix + '.my-new-ns.one-ns',
-        helper.routePrefix + '.my-new-ns.one-ns.test',
-        helper.routePrefix + '.my-new-ns.one-ns.test.test1',
-        helper.routePrefix + '.my-new-ns.two-ns.test2',
-        helper.routePrefix + '.my-new-ns.two-ns.test3',
-        helper.routePrefix + '.my-new-ns.three-ns.test4',
-      ],
-      retries: 3,
-      created: (new Date()).toJSON(),
-      deadline: (new Date()).toJSON(),
-      payload: {},
-      metadata: {
-        name: 'Print `"Hello World"` Once',
-        description: 'This task will prìnt `"Hello World"` **once**!',
-        owner: 'jojensen@mozilla.com',
-        source: 'https://github.com/taskcluster/taskcluster-index',
-      },
-      tags: {
-        objective: 'Test task indexing',
-      },
-    };
-  };
-
   test('Run task and test indexing', async function() {
     var taskId = slugid.nice();
     var task = makeTask();
@@ -263,17 +232,32 @@ suite('Indexing', () => {
     return res;
   };
 
-  test('list top-level namespaces (without auth) results', async function() {
+  test('list top-level namespaces test limit and continuationToken params', async function() {
     var myns = slugid.v4();
     let tasks = await insert10Tasks(myns);
-    let result = await helper.index.listNamespaces(myns, {limit: 1});
-    assert.equal(result.namespaces.length, 1, 'Expected 1 namespace');
-    result.namespaces.forEach(function(obj) {
+    debug('listNamespaces returns continuationToken after limit = 10');
+
+    let i = 1;
+    let continuationToken = undefined;
+    do {
+      let query = {limit: 1};
+      if (!_.isUndefined(continuationToken)) {
+        _.extend(query, {continuationToken});
+      }
+      let result = await helper.index.listNamespaces(myns, query);
+      debug('listNamespaces returns 1 entry');
+      assert.equal(result.namespaces.length, 1, 'Expected 1 namespace');
+      let obj = result.namespaces[0];
+      debug('listNamespaces entries match the namespace regex');
       assert.equal(
         new RegExp(myns + '.my-task').test(obj.namespace) &&
         new RegExp('my-task').test(obj.name),
         true, 'Expect namespace to match regex');
-    });
+      continuationToken = result.continuationToken;
+      i ++;
+    }
+    while (!_.isUndefined(continuationToken));
+    assert(i >= 10, 'continuationToken is valid till 10 listNamespaces');
   });
 
 });
