@@ -33,4 +33,4 @@ tasks:
       description: write a .taskcluster.yml  that runs the tests
       owner: '{{ event.head.user.email }}'
       source: '{{ event.head.repo.url }}'
-allowPullRequests: public
+allowPullRequests: collaborators
