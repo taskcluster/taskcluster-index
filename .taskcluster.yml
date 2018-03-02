@@ -5,7 +5,9 @@ tasks:
     extra:
       github:
         events:
+          - pull_request.closed
           - pull_request.opened
+          - push
     payload:
       maxRunTime: 3600
       image: node
@@ -22,4 +24,4 @@ tasks:
       description: write a .taskcluster.yml  that runs the tests
       owner: '{{ event.head.user.email }}'
       source: '{{ event.head.repo.url }}'
-allowPullRequests: collaborators
+allowPullRequests: public
