@@ -9,7 +9,6 @@ tasks:
           - pull_request.opened
           - pull_request.reopened
           - pull_request.synchronize
-          - push
           - release
     payload:
       maxRunTime: 3600
