@@ -5,19 +5,11 @@ tasks:
     extra:
       github:
         events:
-          - pull_request.closed
           - pull_request.opened
           - pull_request.reopened
           - pull_request.synchronize
-          - pull_request.assigned
-          - pull_request.unassigned
-          - pull_request.labeled
-          - pull_request.unlabeled
-          - pull_request.edited
-          - push
-          - release
           
-    payload:
+          payload:
       maxRunTime: 3600
       image: node
       command:
@@ -26,11 +18,10 @@ tasks:
         - '-c'
         - >-
           git clone {{event.head.repo.url}} repo && cd repo && git config
-          advice.detachedHead false && git checkout {{event.head.sha}} && npm
-          install . && npm test
+          advice.detachedHead false && git checkout {{event.head.sha}} yarn && yarn test
     metadata:
       name: Run tests for taskcluster-index in Taskcluster
-      description: write a .taskcluster.yml  that runs the tests
+      description: The task is to write .taskcluster.yml to run the tests.
       owner: '{{ event.head.user.email }}'
       source: '{{ event.head.repo.url }}'
-allowPullRequests: collaborators
+allowPullRequests: public
