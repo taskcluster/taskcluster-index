@@ -20,11 +20,11 @@ tasks:
         - '-c'
         - >-
           git clone {{event.head.repo.url}} repo && cd repo && git config
-          advice.detachedHead false && git checkout {{event.head.sha}} && npm
-          install . && npm test
+          advice.detachedHead false && git checkout {{event.head.sha}} && yarn
+          install . && yarn test
     metadata:
       name: Run tests for taskcluster-index in Taskcluster
       description: The task is to write .taskcluster.yml to run the tests.
       owner: '{{ event.head.user.email }}'
       source: '{{ event.head.repo.url }}'
-allowPullRequests: collaborators
+allowPullRequests: public
