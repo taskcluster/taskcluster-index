@@ -27,4 +27,5 @@ tasks:
       description: The task is to write .taskcluster.yml to run the tests.
       owner: '{{ event.head.user.email }}'
       source: '{{ event.head.repo.url }}'
-allowPullRequests: public
+allowPullRequests:collaborators
+
