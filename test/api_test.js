@@ -213,4 +213,3 @@ suite('API', () => {
     assert.equal(res.statusCode, 403, 'Expected 403 Forbidden');
   });
 });
-
