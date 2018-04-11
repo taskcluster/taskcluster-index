@@ -151,7 +151,7 @@ api.declare({
   return that.IndexedTask.load({
     namespace:    namespace,
     name:         name,
-    expires:      Entity.greaterThan(new Date().toJSON()),
+    expires:      Entity.op.greaterThanOrEqual(new Date().toJSON()),
   }).then(function(task) {
     return res.reply(task.json());
   }, function(err) {
@@ -401,7 +401,7 @@ api.declare({
   return that.IndexedTask.load({
     namespace:    namespace,
     name:         name,
-    expires:      Entity.greaterThan(new Date().toJSON()),
+    expires:      Entity.op.greaterThanOrEqual(new Date().toJSON()),
   }).then(function(task) {
     // Build signed url for artifact
     var url = null;
