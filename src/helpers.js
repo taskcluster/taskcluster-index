@@ -94,7 +94,7 @@ exports.insertTask = insertTask;
 *    Table:            // Table on which query is to be executed  
 * }
 */
-var listTableEntries = function({query, limit, continuation, key, Table}, callback) {
+var listTableEntries = function({query, limit, continuation, key, Table}) {
   return Table.query(query, {
     limit,
     continuation,
@@ -106,7 +106,9 @@ var listTableEntries = function({query, limit, continuation, key, Table}, callba
     if (data.continuation) {
       retval.continuationToken = data.continuation;
     }
-    return callback(null, retval);
+    return retval;
+  }, function(err) {
+    throw err;
   });
 };
 

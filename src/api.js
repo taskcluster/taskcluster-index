@@ -196,7 +196,15 @@ api.declare({
     continuation,
     key : 'namespaces',
     Table: that.Namespace,
-  }, (error, retval) => res.reply(retval));
+  }).then(function(data) {
+    res.reply(data);
+  }, function(err) {
+    // Re-throw the error, if it's not a 404
+    if (err.code !== 'ResourceNotFound') {
+      throw err;
+    }
+    return res.reportError('ResourceNotFound', 'Indexed task not found', {});
+  });
 });
 
 /** POST List namespaces inside another namespace */
@@ -232,7 +240,15 @@ api.declare({
     continuation,
     key : 'namespaces',
     Table: that.Namespace,
-  }, (error, retval) => res.reply(retval));
+  }).then(function(data) {
+    res.reply(data);
+  }, function(err) {
+    // Re-throw the error, if it's not a 404
+    if (err.code !== 'ResourceNotFound') {
+      throw err;
+    }
+    return res.reportError('ResourceNotFound', 'Indexed task not found', {});
+  });
 });
 
 /** List tasks in namespace */
@@ -275,7 +291,15 @@ api.declare({
     continuation,
     key: 'tasks',
     Table: that.IndexedTask,
-  }, (error, retval) => res.reply(retval));
+  }).then(function(data) {
+    res.reply(data);
+  }, function(err) {
+    // Re-throw the error, if it's not a 404
+    if (err.code !== 'ResourceNotFound') {
+      throw err;
+    }
+    return res.reportError('ResourceNotFound', 'Indexed task not found', {});
+  });
 });
 
 api.declare({
@@ -305,7 +329,15 @@ api.declare({
     continuation,
     key: 'tasks',
     Table: that.IndexedTask,
-  }, (error, retval) => res.reply(retval));
+  }).then(function(data) {
+    res.reply(data);
+  }, function(err) {
+    // Re-throw the error, if it's not a 404
+    if (err.code !== 'ResourceNotFound') {
+      throw err;
+    }
+    return res.reportError('ResourceNotFound', 'Indexed task not found', {});
+  });
 });
 
 /** Insert new task into the index */

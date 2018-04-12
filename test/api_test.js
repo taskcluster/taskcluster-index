@@ -102,6 +102,13 @@ suite('API', () => {
       });
     });
 
+    test('list top-level namespaces throws error if not found', async function() {
+      let result = await helper.index.listNamespaces('', {});
+      result.namespaces.forEach(function(ns) {
+        assert(ns.namespace.indexOf('.') === -1, 'shouldn\'t have any dots');
+      });
+    });
+
     test('list top-level tasks', async function() {
       let result = await helper.index.listTasks('', {});
       result.tasks.forEach(function(task) {
