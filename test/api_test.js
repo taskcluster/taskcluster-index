@@ -80,7 +80,7 @@ suite('API', () => {
       let results = [];
 
       while (1) {
-        let result = await helper.index.listNamespaces('', {});
+        let result = await helper.index.listNamespaces('', opts);
         results = results.concat(result.namespaces);
         if (!result.continuationToken) {
           break;
@@ -97,13 +97,6 @@ suite('API', () => {
     test('list top-level namespaces (without auth)', async function() {
       var index = new helper.Index();
       let result = await index.listNamespaces('', {});
-      result.namespaces.forEach(function(ns) {
-        assert(ns.namespace.indexOf('.') === -1, 'shouldn\'t have any dots');
-      });
-    });
-
-    test('list top-level namespaces throws error if not found', async function() {
-      let result = await helper.index.listNamespaces('', {});
       result.namespaces.forEach(function(ns) {
         assert(ns.namespace.indexOf('.') === -1, 'shouldn\'t have any dots');
       });

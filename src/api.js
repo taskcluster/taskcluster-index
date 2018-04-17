@@ -182,7 +182,7 @@ api.declare({
     'request. For the initial request, the payload should be an empty JSON',
     'object.',
   ].join('\n'),
-}, function(req, res) {
+}, async function(req, res) {
   var that       = this;
   var namespace = req.params.namespace || '';
   let continuation  = req.query.continuationToken || null;
@@ -190,21 +190,15 @@ api.declare({
   let query = {parent: namespace};
 
   // Query with given namespace
-  return helpers.listTableEntries({
+  let namespaces = await helpers.listTableEntries({
     query,
     limit,
     continuation,
-    key : 'namespaces',
+    key: 'namespaces',
     Table: that.Namespace,
-  }).then(function(data) {
-    res.reply(data);
-  }, function(err) {
-    // Re-throw the error, if it's not a 404
-    if (err.code !== 'ResourceNotFound') {
-      throw err;
-    }
-    return res.reportError('ResourceNotFound', 'Indexed task not found', {});
   });
+
+  res.reply(namespaces);
 });
 
 /** POST List namespaces inside another namespace */
@@ -226,7 +220,7 @@ api.declare({
     'request. For the initial request, the payload should be an empty JSON',
     'object.',
   ].join('\n'),
-}, function(req, res) {
+}, async function(req, res) {
   var that       = this;
   let namespace = req.params.namespace || '';
   let limit = req.body.limit;
@@ -234,21 +228,15 @@ api.declare({
   let query = {parent: namespace};
 
   // Query with given namespace
-  return helpers.listTableEntries({
+  let namespaces = await helpers.listTableEntries({
     query,
     limit,
     continuation,
-    key : 'namespaces',
+    key: 'namespaces',
     Table: that.Namespace,
-  }).then(function(data) {
-    res.reply(data);
-  }, function(err) {
-    // Re-throw the error, if it's not a 404
-    if (err.code !== 'ResourceNotFound') {
-      throw err;
-    }
-    return res.reportError('ResourceNotFound', 'Indexed task not found', {});
   });
+
+  res.reply(namespaces);
 });
 
 /** List tasks in namespace */
@@ -275,7 +263,7 @@ api.declare({
     '**Remark**, this end-point is designed for humans browsing for tasks, not',
     'services, as that makes little sense.',
   ].join('\n'),
-}, function(req, res) {
+}, async function(req, res) {
   var that       = this;
   let namespace = req.params.namespace || '';
   let query = {
@@ -285,21 +273,15 @@ api.declare({
   let limit = parseInt(req.query.limit || 1000, 10);
   let continuation = req.query.continuationToken || null;
 
-  return helpers.listTableEntries({
+  let tasks = await helpers.listTableEntries({
     query,
     limit,
     continuation,
     key: 'tasks',
     Table: that.IndexedTask,
-  }).then(function(data) {
-    res.reply(data);
-  }, function(err) {
-    // Re-throw the error, if it's not a 404
-    if (err.code !== 'ResourceNotFound') {
-      throw err;
-    }
-    return res.reportError('ResourceNotFound', 'Indexed task not found', {});
   });
+  
+  res.reply(tasks);
 });
 
 api.declare({
@@ -313,7 +295,7 @@ api.declare({
   description: [
     '(a version of listTasks with POST for backward compatibility; do not use)',
   ].join('\n'),
-}, function(req, res) {
+}, async function(req, res) {
   var that       = this;
   let namespace = req.params.namespace || '';
   let query = {
@@ -323,21 +305,15 @@ api.declare({
   let limit = req.body.limit;
   let continuation = req.body.continuationToken;
 
-  return helpers.listTableEntries({
+  let tasks = await helpers.listTableEntries({
     query,
     limit,
     continuation,
     key: 'tasks',
     Table: that.IndexedTask,
-  }).then(function(data) {
-    res.reply(data);
-  }, function(err) {
-    // Re-throw the error, if it's not a 404
-    if (err.code !== 'ResourceNotFound') {
-      throw err;
-    }
-    return res.reportError('ResourceNotFound', 'Indexed task not found', {});
   });
+  
+  res.reply(tasks);
 });
 
 /** Insert new task into the index */
