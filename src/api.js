@@ -189,7 +189,10 @@ api.declare({
   var namespace = req.params.namespace || '';
   let continuation  = req.query.continuationToken || null;
   let limit         = parseInt(req.query.limit || 1000, 10);
-  let query = {parent: namespace};
+  let query = {
+    parent: namespace,
+    expires: Entity.op.greaterThanOrEqual(new Date().toJSON()),
+  };
 
   // Query with given namespace
   let namespaces = await helpers.listTableEntries({
@@ -227,7 +230,10 @@ api.declare({
   let namespace = req.params.namespace || '';
   let limit = req.body.limit;
   let continuation = req.body.continuationToken;
-  let query = {parent: namespace};
+  let query = {
+    parent: namespace,
+    expires: Entity.op.greaterThanOrEqual(new Date().toJSON()),
+  };
 
   // Query with given namespace
   let namespaces = await helpers.listTableEntries({
@@ -270,6 +276,7 @@ api.declare({
   let namespace = req.params.namespace || '';
   let query = {
     namespace,
+    expires: Entity.op.greaterThanOrEqual(new Date().toJSON()),
   };
 
   let limit = parseInt(req.query.limit || 1000, 10);
@@ -302,6 +309,7 @@ api.declare({
   let namespace = req.params.namespace || '';
   let query = {
     namespace,
+    expires: Entity.op.greaterThanOrEqual(new Date().toJSON()),
   };
 
   let limit = req.body.limit;
