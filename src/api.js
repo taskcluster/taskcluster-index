@@ -148,11 +148,15 @@ api.declare({
   var namespace = indexPath.join('.');
 
   // Load indexed task
-  return that.IndexedTask.load({
+  return that.IndexedTask.query({
     namespace:    namespace,
     name:         name,
-    expires:      Entity.op.greaterThanOrEqual(new Date().toJSON()),
-  }).then(function(task) {
+    expires:      Entity.op.greaterThan(new Date()),
+  }).then(function(tasks) {
+    if (_.isEmpty(tasks.entries)) {
+      return res.reportError('ResourceNotFound', 'Indexed task has expired', {});
+    }
+    let task = tasks.entries[0];
     return res.reply(task.json());
   }, function(err) {
     // Re-throw the error, if it's not a 404
@@ -191,7 +195,7 @@ api.declare({
   let limit         = parseInt(req.query.limit || 1000, 10);
   let query = {
     parent: namespace,
-    expires: Entity.op.greaterThanOrEqual(new Date().toJSON()),
+    expires: Entity.op.greaterThan(new Date()),
   };
 
   // Query with given namespace
@@ -232,7 +236,7 @@ api.declare({
   let continuation = req.body.continuationToken;
   let query = {
     parent: namespace,
-    expires: Entity.op.greaterThanOrEqual(new Date().toJSON()),
+    expires: Entity.op.greaterThan(new Date()),
   };
 
   // Query with given namespace
@@ -276,7 +280,7 @@ api.declare({
   let namespace = req.params.namespace || '';
   let query = {
     namespace,
-    expires: Entity.op.greaterThanOrEqual(new Date().toJSON()),
+    expires: Entity.op.greaterThan(new Date()),
   };
 
   let limit = parseInt(req.query.limit || 1000, 10);
@@ -309,7 +313,7 @@ api.declare({
   let namespace = req.params.namespace || '';
   let query = {
     namespace,
-    expires: Entity.op.greaterThanOrEqual(new Date().toJSON()),
+    expires: Entity.op.greaterThan(new Date()),
   };
 
   let limit = req.body.limit;
@@ -409,7 +413,7 @@ api.declare({
   return that.IndexedTask.load({
     namespace:    namespace,
     name:         name,
-    expires:      Entity.op.greaterThanOrEqual(new Date().toJSON()),
+    expires:      Entity.op.greaterThan(new Date()),
   }).then(function(task) {
     // Build signed url for artifact
     var url = null;
