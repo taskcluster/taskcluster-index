@@ -110,7 +110,7 @@ var load = loader({
         IndexedTask,  
         Namespace,
       },
-      rootUrl:          cfg.taskcluster.rootUrl
+      rootUrl:          cfg.taskcluster.rootUrl,
       publish:          cfg.app.publishMetaData,
       aws:              cfg.aws,
       schemaset,
