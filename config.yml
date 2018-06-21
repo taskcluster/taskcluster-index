@@ -90,10 +90,8 @@ production:
 
 test:
   app:
-    routePrefix:                  'dummy-routes.index-testing'
     indexedTaskTableName:         'DummyTestIndexedTasks'
     namespaceTableName:           'DummyTestNamespaces'
-    azureAccount:                 'inMemory'
 
   monitoring:
     enable: false
@@ -102,6 +100,9 @@ test:
 
   aws:
     region:                       'us-west-2'
+
+  azure:
+    accountId:                    'jungle'
 
   pulse:
     fake: true

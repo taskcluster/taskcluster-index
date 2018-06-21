@@ -51,7 +51,7 @@ var load = loader({
   schemaset: {
     requires: ['cfg'],
     setup: ({cfg}) => new SchemaSet({
-      serviceName: 'events',
+      serviceName: 'index',
       publish: cfg.app.publishMetaData,
       aws: cfg.aws,
     }),
@@ -60,6 +60,7 @@ var load = loader({
   queue: {
     requires: ['cfg'],
     setup: ({cfg}) => new taskcluster.Queue({
+      rootUrl: cfg.taskcluster.rootUrl,
       credentials: cfg.taskcluster.credentials,
     }),
   },
@@ -72,7 +73,7 @@ var load = loader({
   monitor: {
     requires: ['process', 'profile', 'cfg'],
     setup: ({process, profile, cfg}) => monitor({
-      project: cfg.monitoring.project || 'taskcluster-index',
+      projectName: cfg.monitoring.project || 'taskcluster-index',
       enable: cfg.monitoring.enable,
       credentials: cfg.taskcluster.credentials,
       mock: profile === 'test',
@@ -103,10 +104,9 @@ var load = loader({
 
   api: {
     requires: ['cfg', 'schemaset', 'IndexedTask', 'Namespace', 'monitor', 'queue'],
-    setup: async ({cfg, schemaset, IndexedTask, Namespace, monitor, queue}) => v1.setup({
+    setup: async ({cfg, schemaset, IndexedTask, Namespace, monitor, queue}) => builder.build({
       context: {
         queue,
-        schemaset,
         IndexedTask,  
         Namespace,
       },

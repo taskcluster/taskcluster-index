@@ -11,7 +11,6 @@ var Entity      = require('azure-entities');
  * In this API implementation we shall assume the following context:
  * {
  *   queue:             // taskcluster.Queue instance w. "queue:get-artifact:*"
- *   validator:         // base.validator instance
  *   IndexedTask:       // data.IndexedTask instance
  *   Namespace:         // data.Namespace instance
  * }
@@ -115,7 +114,7 @@ let builder = new APIBuilder({
   projectName:        'taskcluster-index',
   serviceName:        'index',
   version:            'v1',
-  context:            ['queue', 'validator', 'IndexedTask', 'Namespace'],
+  context:            ['queue', 'IndexedTask', 'Namespace'],
   params: {
     namespace:        helpers.namespaceFormat,
     indexPath:        helpers.namespaceFormat,
