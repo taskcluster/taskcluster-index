@@ -20,7 +20,7 @@ suiteSetup(async function() {
 
 // set up the testing secrets
 exports.secrets = new Secrets({
-  secretName: 'project/taskcluster/testing/taskcluster-queue',
+  secretName: 'project/taskcluster/testing/taskcluster-index',
   secrets: {
     taskcluster: [
       {env: 'TASKCLUSTER_ROOT_URL', cfg: 'taskcluster.rootUrl', name: 'rootUrl',

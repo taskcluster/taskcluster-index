@@ -66,8 +66,10 @@ var load = loader({
   },
 
   queueEvents: {
-    requires: [],
-    setup: () => new taskcluster.QueueEvents(),
+    requires: ['cfg'],
+    setup: ({cfg}) => new taskcluster.QueueEvents({
+      rootUrl: cfg.taskcluster.rootUrl,
+    }),
   },
 
   monitor: {

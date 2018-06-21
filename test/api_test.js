@@ -10,6 +10,7 @@ const libUrls = require('taskcluster-lib-urls');
 
 helper.secrets.mockSuite('api_test.js', ['taskcluster'], function(mock, skipping) {
   helper.withEntities(mock, skipping);
+  helper.withFakeQueue(mock, skipping);
   helper.withPulse(mock, skipping);
   helper.withServer(mock, skipping);
 
